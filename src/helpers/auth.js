@@ -1,7 +1,20 @@
-import { auth } from '../services/firebase'
+import { auth, db } from '../services/firebase'
+
+const users = []
+
+export async function getUsers() {
+  return db.ref('/users/').once('value').then(function(snapshot) {
+    snapshot.forEach(function(item) {
+      const itemVal = item.val()
+      users.push(itemVal)
+    })
+    return users
+    // console.log(users)
+  })
+}
 
 export function signup(email, password) {
-    return auth().createUserWithEmailAndPassword(email, password)
+    auth().createUserWithEmailAndPassword(email, password)
 }
 
 export function signin(email, password) {

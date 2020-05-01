@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { signup, signInWithGoogle, signInWithGitHub } from '../helpers/auth'
+import { db } from '../services/firebase'
 
 export default function SignUp() {
     const [credentials, setCredentials] = useState(
@@ -24,6 +25,14 @@ export default function SignUp() {
         setError('')
         try {
           await signup(credentials.email, credentials.password)
+          try {
+            await db.ref('users').push({
+              email: credentials.email,
+            })
+          }
+          catch (err) {
+            setError(err.message)
+          }
         } catch (err) {
           setError(err.message)
         }

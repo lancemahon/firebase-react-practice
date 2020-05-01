@@ -19,7 +19,7 @@ export default function Login() {
 
     async function handleSubmit(event) {
         event.preventDefault();
-        console.log('email: ', credentials.email)
+        // console.log('email: ', credentials.email)
         setError('')
         try {
           await signin(credentials.email, credentials.password);

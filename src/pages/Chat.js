@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react"
-import { auth } from "../services/firebase"
-import { db } from "../services/firebase"
+import { auth, db } from "../services/firebase"
+import { getUsers } from '../helpers/auth'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 
 import ChatMessage from '../components/ChatMessage'
+import NewConversation from "../components/NewConveration"
 
 export default function Chat() {
     const user = auth().currentUser
+    const [users, setUsers] = useState([])
     const [chats, setChats] = useState([])
     const [content, setContent] = useState('')
     const [errors, setErrors] = useState({
@@ -17,6 +19,14 @@ export default function Chat() {
 
     useEffect(() => {
         setErrors({...errors, readError: null})
+        const temp = []
+        getUsers().then(data => data.forEach(item => {
+            // console.log('item:', item)
+            temp.push({email: item.email})
+            // console.log(temp)
+        }))
+        setUsers(temp)
+        // console.log(users)
         try {
             db.ref('chats').on('value', snapshot => {
                 let chatsArray = []
@@ -127,6 +137,7 @@ export default function Chat() {
             <div style={logoutButtonStyle}>
                 <button onClick={logout}>Logout</button>
             </div>
+            <NewConversation users={users}/>
         </div>
         )
   }
