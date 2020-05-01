@@ -111,6 +111,22 @@ export default function Chat() {
         gridRow: '3 / span 1'
     }
 
+    const thirdColumnStyle = {
+        gridColumn: '3 / span 1',
+        gridRow: '1 / span 3',
+
+        display: 'grid',
+        gridTemplateRows: '5% 1fr'
+    }
+
+    const newConversationStyle = {
+        padding: '0 0 0 2%',
+        margin: '0 0 0 10%',
+        border: '2px solid black',
+        borderRadius: '5px',
+        gridRow: '2 / span 1'
+    }
+
     return (
         <div style={chatWindowContainerStyle}>
             <div style={chatWindowStyle} className="chats">
@@ -137,7 +153,11 @@ export default function Chat() {
             <div style={logoutButtonStyle}>
                 <button onClick={logout}>Logout</button>
             </div>
-            <NewConversation users={users}/>
+            <div style={thirdColumnStyle}>
+                <div style={newConversationStyle}>
+                    <NewConversation users={users}/>
+                </div>
+            </div>
         </div>
         )
   }
