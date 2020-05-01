@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react"
 import { auth } from "../services/firebase"
 import { db } from "../services/firebase"
+import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/Button'
+
+import ChatMessage from '../components/ChatMessage'
 
 export default function Chat() {
-    const [user, setUser] = useState(auth().currentUser)
+    const user = auth().currentUser
     const [chats, setChats] = useState([])
     const [content, setContent] = useState('')
     const [errors, setErrors] = useState({
@@ -36,7 +40,8 @@ export default function Chat() {
         try {
             await db.ref('chats').push({
                 content: content,
-                timestamp: Date.now(),
+                timestamp: Date().toString(),
+                email: user.email,
                 uid: user.uid
             })
             setContent('')
@@ -45,21 +50,82 @@ export default function Chat() {
         }
     }
 
+    function logout() {
+        auth().signOut()
+    }
+
+    const chatWindowContainerStyle = {
+        display: 'grid',
+        gridTemplateColumns: '30% 40% 30%',
+        gridTemplateRows: 'auto 20hv 5vh 5vh'
+    }
+
+    const chatWindowStyle = {
+        gridColumn: '2 / span 1',
+        gridRow: '1 / span 1',
+        height: '80vh',
+        overflowY: 'scroll'
+    }
+
+    const writeMessageBoxStyle = {
+        gridColumn: '2 / span 1',
+        gridRow: '2 / span 1',
+
+        display: 'grid',
+        gridTemplateColumns: '70% 20%',
+        gridTemplateRows: 'auto'
+    }
+
+    const messageSenderStyle = {
+        gridColumn: '2 / span 1'
+    }
+
+    const textAreaStyle = {
+        gridColumn: '1 / span 1',
+        gridRows: '1 / span 1'
+    }
+
+    const sendButtonStyle = {
+        gridColumn: '-1 / span 1',
+        gridRows: '1 / span 1'
+    }
+
+    const logoutButtonStyle = {
+        gridRow: '4 / span 1',
+        gridColumn: '2 / span 1',
+        justifySelf: 'center'
+    }
+
+    const userInfoStyle = {
+        gridColumn: '2 / span 1',
+        gridRow: '3 / span 1'
+    }
+
     return (
-        <div>
-            <div className="chats">
+        <div style={chatWindowContainerStyle}>
+            <div style={chatWindowStyle} className="chats">
                 {chats.map(chat => {
-                return <p key={chat.timestamp}>{chat.content}</p>
+                return <ChatMessage key={chat.timestamp} chat={chat} />
                 })}
             </div>
-            {/* {# message form #} */}
-            <form onSubmit={handleSubmit}>
-                <input onChange={handleChange} value={content}></input>
-                {errors.writeError ? <p>{errors.writeError}</p> : null}
-                <button type="submit">Send</button>
-            </form>
-            <div>
-                Login in as: <strong>{user.email}</strong>
+            
+            <div style={messageSenderStyle}>
+                <Form onSubmit={handleSubmit}>
+                    <div style={writeMessageBoxStyle}>
+                    <Form.Control as='textarea' onChange={handleChange} value={content}
+                        style={textAreaStyle}></Form.Control>
+                    {errors.writeError ? <p>{errors.writeError}</p> : null}
+                    <Button type="submit" style={sendButtonStyle}>Send</Button>
+                    </div>
+                </Form>
+            </div>
+
+            <div style={userInfoStyle}>
+                Logged in as: <strong>{user.email}</strong>
+            </div>
+
+            <div style={logoutButtonStyle}>
+                <button onClick={logout}>Logout</button>
             </div>
         </div>
         )

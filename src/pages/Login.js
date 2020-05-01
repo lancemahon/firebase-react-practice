@@ -12,12 +12,14 @@ export default function Login() {
 
     function handleChange(event) {
         setCredentials({
+            ...credentials,
           [event.target.name]: event.target.value
         })
       }
 
     async function handleSubmit(event) {
         event.preventDefault();
+        console.log('email: ', credentials.email)
         setError('')
         try {
           await signin(credentials.email, credentials.password);
